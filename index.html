@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ввод кода · TV</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="panel">
+    <p class="eyebrow">ПОДКЛЮЧЕНИЕ К ТЕЛЕВИЗОРУ</p>
+    <h1>Введите код</h1>
+    <p class="hint">Выберите четыре цифры с помощью пульта</p>
+    <label class="sr-only" for="code">Четырёхзначный код</label>
+    <input id="code" class="code" type="text" readonly maxlength="4" tabindex="-1" placeholder="— — — —" autocomplete="off">
+    <div class="keypad" role="group" aria-label="Цифровая клавиатура">
+      <div class="row"><button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button></div>
+      <div class="row"><button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button></div>
+      <div class="row"><button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button></div>
+      <div class="row"><button data-action="clear" class="utility">Очистить</button><button data-digit="0">0</button><button data-action="delete" class="utility">Удалить</button></div>
+    </div>
+    <button id="submit" class="submit" disabled>Отправить</button>
+    <p id="status" class="status" role="status" aria-live="polite">Введите 4 цифры</p>
+    <p class="legend">↑ ↓ ← → &nbsp; Выбор &nbsp; · &nbsp; OK &nbsp; Нажать &nbsp; · &nbsp; Назад &nbsp; Закрыть</p>
+  </main>
+  <script src="./core.js"></script>
+  <script src="./bridge.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

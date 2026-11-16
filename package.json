@@ -1,0 +1,13 @@
+{
+  "name": "tv-code-webview",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/serve.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/build.cjs"
+  },
+  "devDependencies": {
+    "acorn": "8.15.0"
+  }
+}
