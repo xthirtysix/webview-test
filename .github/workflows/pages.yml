@@ -21,8 +21,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-      - run: npm ci
+          cache: ${{ hashFiles('package-lock.json') != '' && 'npm' || '' }}
+      - name: Install dependencies from lockfile
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+      - name: Install dependencies without lockfile
+        if: hashFiles('package-lock.json') == ''
+        run: npm install
       - run: npm test
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3

@@ -36,7 +36,7 @@
   }
 
   function onState(state) {
-    var messages = { waiting: 'Отправка…', success: 'Код получен приложением', timeout: 'Нет ответа. Попробуйте отправить ещё раз', disconnected: 'Нет соединения с приложением. Откройте пример подключения' };
+    var messages = { waiting: 'Отправка…', success: 'Код получен приложением', timeout: 'Нет ответа. Попробуйте отправить ещё раз', disconnected: 'Нет соединения с приложением. Запустите экран из TV-приложения' };
     locked = state === 'waiting' || state === 'success';
     status.textContent = messages[state];
     render();

@@ -25,6 +25,7 @@ function createFixture({ opaque = false, allowOpaque = false, acknowledge = true
   const childOrigin = 'https://user.github.io';
   const hostOrigin = opaque ? 'null' : 'https://tv.example';
   const queue = [];
+  const successMessages = [];
   const timers = new Map();
   let timerId = 0;
   const setTimeout = fn => { timers.set(++timerId, fn); return timerId; };
@@ -35,6 +36,7 @@ function createFixture({ opaque = false, allowOpaque = false, acknowledge = true
   child.parent = parent;
   parent.postMessage = (data, destination) => {
     assert.equal(destination, opaque ? '*' : hostOrigin);
+    if (data.type === 'success') successMessages.push({ data: structuredClone(data), destination });
     queue.push(() => parent.dispatch('message', { data: structuredClone(data), source: child, origin: childOrigin }));
   };
   child.postMessage = (data, destination) => {
@@ -77,7 +79,7 @@ function createFixture({ opaque = false, allowOpaque = false, acknowledge = true
   }
   frame.dispatch('load', {});
   flush();
-  return { child, parent, host, frame, codes, elements, buttons, document, flush, key, timers, canceled: () => canceled };
+  return { child, parent, host, frame, codes, successMessages, elements, buttons, document, flush, key, timers, canceled: () => canceled };
 }
 
 test('all shipped scripts parse as ES5', () => {
@@ -111,6 +113,9 @@ test('four digits enable submit, preserve zeros and ignore overflow; ack locks f
   f.buttons[12].dispatch('click', {});
   f.flush();
   assert.deepEqual(f.codes, ['0123']);
+  assert.deepEqual(f.successMessages, [{ data: { type: 'success', pin: '0123' }, destination: 'https://tv.example' }]);
+  f.child.dispatch('message', { source: f.parent, origin: 'https://tv.example', data: { channel: 'tv-code', version: 1, type: 'ack', sessionId: 'session-1' } });
+  assert.equal(f.successMessages.length, 1);
   assert.equal(f.elements.status.textContent, 'Код получен приложением');
   assert.equal(f.elements.submit.disabled, true);
   f.key(57);
@@ -152,12 +157,14 @@ test('timeout allows retry; host delivers each session only once', () => {
   f.buttons[12].dispatch('click', {});
   f.flush();
   assert.deepEqual(f.codes, ['0123']);
+  assert.deepEqual(f.successMessages, []);
   for (const fn of [...f.timers.values()]) fn();
   assert.equal(f.elements.submit.disabled, false);
   assert.match(f.elements.status.textContent, /Нет ответа/);
   f.buttons[12].dispatch('click', {});
   f.flush();
   assert.deepEqual(f.codes, ['0123']);
+  assert.deepEqual(f.successMessages, []);
 });
 
 test('back keys cancel; unrecognized keys remain available to host', () => {

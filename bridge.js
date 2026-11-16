@@ -12,6 +12,7 @@
     var parentOrigin = null;
     var waiting = false;
     var completed = false;
+    var submittedPin = null;
     var timer = null;
 
     function send(type, extra) {
@@ -53,6 +54,7 @@
         options.clearTimeout(timer);
         waiting = false;
         completed = true;
+        options.parent.postMessage({ type: 'success', pin: submittedPin }, parentOrigin === 'null' ? '*' : parentOrigin);
         options.onState('success');
       }
     }
@@ -66,6 +68,7 @@
         return;
       }
       waiting = true;
+      submittedPin = code;
       options.onState('waiting');
       timer = options.setTimeout(function () {
         waiting = false;
